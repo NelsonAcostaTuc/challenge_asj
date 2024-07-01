@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+pydantic
+databases
+mysqlclient
+pymysql
+python-dotenv
+celery==5.2.3
+redis==4.1.0
+requests
