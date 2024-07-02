@@ -6,17 +6,20 @@ from . import models, schemas, crud
 from .database import SessionLocal, engine
 from .celery_app import celery_app
 from .tasks import fetch_weather_data
-import os
-import glob
 import json
 from celery import chain  # Asegúrate de importar chain desde Celery
 import asyncio
-import httpx
+import logging
+from sqlalchemy import func
 
 # Crear las tablas de la base de datos
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+# Configuración de logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Dependencia para obtener la sesión de la base de datos
 def get_db():
@@ -26,18 +29,21 @@ def get_db():
     finally:
         db.close()
 
+
 @app.get("/cars", response_model=List[schemas.Car])
-def read_cars(skip: int = 0, limit: int = 10, brand: Optional[str] = None, subsidiary_name: Optional[str] = None, db: Session = Depends(get_db)):
-    if brand and subsidiary_name:
-        cars = db.query(models.Car).join(models.Subsidiary).filter(
-            models.Car.brand == brand, models.Subsidiary.name == subsidiary_name
-        ).all()
-    elif brand:
-        cars = crud.get_cars_by_brand(db, brand=brand)
-    elif subsidiary_name:
-        cars = crud.get_cars_by_subsidiary_name(db, subsidiary_name=subsidiary_name)
-    else:
-        cars = crud.get_cars(db, skip=skip, limit=limit)
+def read_cars(skip: int = 0, limit: int = 10, brand: Optional[str] = None, subsidiaryName: Optional[str] = None, db: Session = Depends(get_db)):
+    logger.info(f"Query params - brand: {brand}, subsidiary_name: {subsidiaryName}")
+    
+    query = db.query(models.Car).join(models.Subsidiary)
+    
+    if brand:
+        query = query.filter(func.lower(models.Car.brand) == func.lower(brand))
+    if subsidiaryName:
+        query = query.filter(func.lower(models.Subsidiary.name) == func.lower(subsidiaryName))
+    
+    cars = query.offset(skip).limit(limit).all()
+    
+    logger.info(f"Number of cars found: {len(cars)}")
     return cars
 
 @app.post("/cars", response_model=schemas.Car)
