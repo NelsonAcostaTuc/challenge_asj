@@ -21,7 +21,7 @@ celery_app.conf.update(
     beat_schedule={
         'fetch-weather-every-5-seconds': {
             'task': 'app.tasks.fetch_weather_data',
-            'schedule': timedelta(seconds=5),  # Ejecuta cada 5 segundos
+            'schedule': 5.0,  # Ejecuta cada 5 segundos
         },
     },
 )
