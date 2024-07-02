@@ -7,7 +7,7 @@ from .database import SessionLocal, engine
 from .celery_app import celery_app
 from .tasks import fetch_weather_data
 import json
-from celery import chain  # Asegúrate de importar chain desde Celery
+from celery import chain  
 import asyncio
 import logging
 from sqlalchemy import func
@@ -66,7 +66,7 @@ async def periodic_fetch_weather():
         task_chain = chain(fetch_weather_data.s())
         task_chain.apply_async()
 
-# Asegúrate de cerrar la tarea periódica al cerrar la aplicación
+
 @app.on_event("shutdown")
 async def shutdown_event():
     if app.state.fetch_weather_task:

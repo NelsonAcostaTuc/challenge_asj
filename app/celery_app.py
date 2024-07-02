@@ -26,5 +26,3 @@ celery_app.conf.update(
     },
 )
 
-# Importar tareas para asegurarse de que están registradas
-import app.tasks
