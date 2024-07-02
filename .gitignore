@@ -87,7 +87,6 @@ target/
 __pypackages__/
 
 # Environments
-.env
 .venv
 env/
 venv/
@@ -121,5 +120,4 @@ dmypy.json
 
 # Docker
 *.log
-docker-compose.yml
 docker-compose.override.yml
