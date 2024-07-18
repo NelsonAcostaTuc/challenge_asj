@@ -1,6 +1,8 @@
 from sqlalchemy.orm import Session
 from . import models, schemas
 
+# Las funciones declaradas podrían indicar el tipo de dato que retornan para hacer mas claro su uso. 
+
 def get_car(db: Session, car_id: int):
     return db.query(models.Car).filter(models.Car.id == car_id).first()
 

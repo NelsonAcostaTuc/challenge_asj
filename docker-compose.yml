@@ -1,3 +1,4 @@
+# Poner la directiva "version" en el archivo docker-compose.yml se considera obsoleto desde hace varias versiones. 
 version: '3.8'
 
 services:

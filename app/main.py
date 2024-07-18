@@ -30,6 +30,9 @@ def get_db():
         db.close()
 
 
+# En general en python se adopta el snake_case en lugar de camelCase. subsidiaryName != subsidiary_name.
+# Si el objetivo era que los usuarios de la API hagan uso de camelCase, se pudo haber optado por otras alternativas para no degradar la legibilidad del código. 
+# A saber: https://github.com/nficano/humps junto a una configuración custom de pydantic.
 @app.get("/cars", response_model=List[schemas.Car])
 def read_cars(skip: int = 0, limit: int = 10, brand: Optional[str] = None, subsidiaryName: Optional[str] = None, db: Session = Depends(get_db)):
     logger.info(f"Query params - brand: {brand}, subsidiary_name: {subsidiaryName}")
@@ -53,6 +56,8 @@ def create_car(car: schemas.CarCreate, db: Session = Depends(get_db)):
 
 app.state.fetch_weather_task = None
 
+# Los ejercicio no requerian de un endpoint para ejecutar la tarea de celery.
+# El ejericio de celery debió haber estado completamente separado del ejercicio de FastAPI.
 @app.post("/fetch-weather")
 async def fetch_weather():
     if not app.state.fetch_weather_task:
